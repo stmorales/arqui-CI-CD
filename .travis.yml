@@ -50,7 +50,7 @@ deploy:
       key: latest/latest.zip
       bundle_type: zip
       application: Backend-Arqui-E3
-      deployment_group: Backend-Arqui-E3   
+      deployment_group: Backend-Arqui-E3-v2 
       region: $AWS_REGION
       wait_until_deployed: true
       on:
