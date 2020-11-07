@@ -1,0 +1,60 @@
+language: python
+
+cache: pip
+python:
+- '3.8'
+services:
+    - docker
+branches:
+    only:
+        - ci-cd
+install:
+# - docker-compose -f production.yml build
+# - docker-compose -f production.yml up -d
+# - docker-compose run --rm web python3 test_main.py
+- pip install awscli
+- export PATH=$PATH:$HOME/.local/bin
+
+script:
+- zip -r latest *
+- mkdir -p dpl_cd_upload
+- mv latest.zip dpl_cd_upload/latest.zip
+- eval $(aws ecr get-login --region $AWS_REGION --no-include-email)
+
+after_success:
+- docker --version
+# - docker run bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+# - docker exec -it dockertestapp_app_1 bash -c 'pytest'
+# - docker-compose -f production.yml run pytest
+- docker build -t $AWS_ECR_API:latest .
+# - docker tag $AWS_ECR_API:latest
+- docker push $AWS_ECR_API:latest
+- docker images
+
+deploy:
+    - provider: s3
+      access_key_id: $AWS_ACCESS_KEY_ID
+      secret_access_key: $AWS_SECRET_ACCESS_KEY
+      local_dir: dpl_cd_upload
+      skip_cleanup: true
+      bucket: "backend-cd"
+      region: $AWS_REGION
+      upload_dir: latest
+      on:
+        branch: ci-cd
+
+    - provider: codedeploy
+      access_key_id: $AWS_ACCESS_KEY_ID
+      secret_access_key: $AWS_SECRET_ACCESS_KEY
+      bucket: "backend-cd"
+      key: latest/latest.zip
+      bundle_type: zip
+      application: Backend-Arqui-E3
+      deployment_group: Backend-Arqui-E3   
+      region: $AWS_REGION
+      wait_until_deployed: true
+      on:
+        branch: ci-cd
+
+
+

@@ -1,0 +1,42 @@
+
+<div>
+    <head>
+        <title>COVID-19 CHAT</title>
+    </head>
+</div>
+<div>
+    <h2>Chat with:</h2>
+    {% for user in users %}
+        <form action="../chat/" method="GET" target="_blank">
+            <input type="hidden" name="username" value="{{username}}">
+            <input type="hidden" name="receptor" value="{{user.username}}">
+            <input type="submit" value="{{user.username}}">
+        </form>
+    {% endfor %}
+</div>
+<div>
+    <h3>Groups</h3>
+    <div>
+        {% for group in groups %}
+        <form action="../group/" method="GET" target="_blank">
+            <input type="hidden" name="username" value="{{username}}">
+            <input type="hidden" name="groupId" value="{{group.id}}">
+            <input type="submit" value="{{group.name}}">
+        </form>
+    {% endfor %}
+    </div>
+</div>
+<div>
+    <h3>New group</h3>
+    <form action="../new_group/" method="POST" target="_blank">
+        <label for="name">Choose the group's name: </label>
+        <input type="text" name="name">
+        <input type=hidden name="username" value="{{username}}">
+    <br>
+    {% for user in users %}
+        <input type="checkbox" name="members" value="{{user.id}}">
+        <label for="member"> {{user.username}}</label><br>
+    {% endfor %}
+    <input type="submit" value="Create group">
+    </form>
+</div>

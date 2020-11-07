@@ -1,0 +1,25 @@
+<div>
+    <head>
+        <title>COVID-19 CHAT</title>
+    </head>
+</div>
+<div>
+    <h1>Chat</h1>
+    <h2>Chat: {{receptor.username}}</h2>
+    <h3>Username: {{user.username}}</h3>
+    
+    <div>
+    {% for message in messages %}
+            <p>{{message.user.username}} [{{message.send_at}}]: {{message.body}}</p>
+    {% endfor %}
+    </div>
+    <div>
+        <form action="/message/" method="POST">
+            <label for="body">Write your message: </label>
+            <input type="text" name="body">
+            <input type="hidden" name="userId" value="{{user.id}}"/>
+            <input type="hidden" name="receptorId" value="{{receptor.id}}"/>            
+            <input type="submit" value="Send">
+        </form>
+    </div>
+</div>
