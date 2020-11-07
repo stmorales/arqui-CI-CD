@@ -9,9 +9,9 @@ branches:
     only:
         - ci-cd
 install:
-# - docker-compose -f production.yml build
-# - docker-compose -f production.yml up -d
-# - docker-compose run --rm web python3 test_main.py
+- docker-compose -f production.yml build
+- docker-compose -f production.yml up -d
+- docker-compose run --rm web python3 test_main.py
 - pip install awscli
 - export PATH=$PATH:$HOME/.local/bin
 

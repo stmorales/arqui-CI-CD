@@ -17,7 +17,7 @@ def test_get_users():
             "Authorization": f"Bearer {token}"
         }, json={"username": 'test'})
     assert list == type(response.json())
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 
 test_create_user()
