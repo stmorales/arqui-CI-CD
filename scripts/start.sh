@@ -7,6 +7,8 @@ cd ..
 cd ..
 cd ..
 cd ..
+cd ..
+cd home/ec2-user
 ls
 
 docker-compose -f iic2173-proyecto-semestral-grupo-14/production.yml up -d
