@@ -7,7 +7,7 @@ services:
     - docker
 branches:
     only:
-        - ci-cd
+        - master
 install:
 - docker-compose -f production.yml build
 - docker-compose -f production.yml up -d
@@ -38,7 +38,7 @@ deploy:
       region: $AWS_REGION
       upload_dir: latest
       on:
-        branch: ci-cd
+        branch: master
 
     - provider: codedeploy
       access_key_id: $AWS_ACCESS_KEY_ID
@@ -51,7 +51,7 @@ deploy:
       region: $AWS_REGION
       wait_until_deployed: true
       on:
-        branch: ci-cd
+        branch: master
 
 
 
