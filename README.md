@@ -1,7 +1,7 @@
 # IIC2173 - Entrega 1 - Levantando clusters hechos por estudiantes de arquitectura de sistemas de software
 
 FrontEnd URL: `http://frontend-grupo14-arqui.tk`
-BackEnd URL: `https://backend-chat-arqui.tk`
+BackEnd URL: `https://backend-grupo14-arqui.tk`
 
 Connect to Front: `ssh -i "grupo_14.pem" ec2-user@ec2-52-1-189-235.compute-1.amazonaws.com`
 Connect to Back: `ssh -i "grupo_14.pem" ec2-user@ec2-3-94-48-120.compute-1.amazonaws.com`

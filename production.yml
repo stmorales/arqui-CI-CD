@@ -20,7 +20,7 @@ services:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fastapi.rule=Host(`backend-chat-arqui.tk`)"
+      - "traefik.http.routers.fastapi.rule=Host(`backend-grupo14-arqui.tk`)"
       # - "traefik.http.routers.fastapi.rule=PathPrefix(`/`)"
       - "traefik.http.routers.fastapi.tls=true"
       - "traefik.http.routers.fastapi.tls.certresolver=letsencrypt"
@@ -44,4 +44,4 @@ services:
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./services/traefik/traefik.prod.toml:/etc/traefik/traefik.toml"
+      - "./traefik/traefik.prod.toml:/etc/traefik/traefik.toml"
