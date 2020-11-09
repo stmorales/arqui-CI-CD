@@ -4,5 +4,4 @@
 cd ..
 cd ..
 cd /home/ec2-user/iic2173-proyecto-semestral-grupo-14
-ls
 docker-compose -f production.yml up -d
