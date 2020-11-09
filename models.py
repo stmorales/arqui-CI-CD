@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table, Boolean
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
@@ -15,6 +15,9 @@ class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String)
+    password = Column(String)
+    email = Column(String)
+    admin = Column(Boolean)
     messages = relationship("Message")
     notifications = relationship("Notification")
     groups = relationship(
@@ -27,6 +30,7 @@ class Group(Base):
     __tablename__ = 'group'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
+    private = Column(Boolean)
     users = relationship(
         "User",
         secondary=association_table,

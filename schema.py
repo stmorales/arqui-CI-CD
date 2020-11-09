@@ -4,7 +4,9 @@ from datetime import datetime
 
 
 class UserCreate(BaseModel):
-    username: str
+    userName: str
+    password: str
+    email: str
 
 
 class User(UserCreate):
@@ -23,6 +25,7 @@ class GroupCreate(BaseModel):
 class Group(BaseModel):
     id: int
     name: str
+    private: bool
 
 class GroupMessageCreate(BaseModel):
     body: str
@@ -41,8 +44,6 @@ class Message(BaseModel):
     user: User
     receptor: User
 
-# class MessageList(BaseModel):
-#     messages: List[Message]
 
 class Notification(BaseModel):
     message: str
