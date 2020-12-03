@@ -272,14 +272,14 @@ async def group(message: schema.GroupMessageCreate, token: str = Depends(oauth2_
     )
     db.session.add(db_message)
     db.session.commit()
-    return get_group_messages(group)
+    messages = db.session.query(models.GroupMessage).filter(models.GroupMessage.groupId==int(message.groupId)).all()
+    for m in messages:
+        m.send_at = m.time.strftime("%H:%M")
+    return messages
 
-@app.get('/groupMessages/')
-def get_group_messages(group, token: str = Depends(oauth2_scheme)):
-    if type(group)==str:
-        messages = db.session.query(models.GroupMessage).filter(models.GroupMessage.groupId==int(group)).all()
-    else:
-        messages = db.session.query(models.GroupMessage).filter(models.GroupMessage.groupId==group.id).all()
+@app.get('/groupMessages/{group_id}')
+def get_group_messages(group_id: int, token: str = Depends(oauth2_scheme)):
+    messages = db.session.query(models.GroupMessage).filter(models.GroupMessage.groupId==group_id).all()
     for m in messages:
         m.send_at = m.time.strftime("%H:%M")
     return messages
@@ -294,6 +294,8 @@ def get_notifications(userId: int, token: str = Depends(oauth2_scheme)):
 @app.get('/admin/all-users/{user_id}')
 def get_all_users_admin(user_id: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
         users = db.session.query(models.User).all()
         return {"message": 'ok', "users": users}
@@ -302,6 +304,8 @@ def get_all_users_admin(user_id: int, token: str = Depends(oauth2_scheme)):
 @app.post('/admin/create-user/{user_id}')
 def create_user_admin(user: schema.UserCreate, user_id: int, token: str = Depends(oauth2_scheme)):
     user2 = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user2 == None:
+        return {"message": 'not user'}
     if user2.admin:
         db_user = models.User(
             username=user.userName,
@@ -318,6 +322,8 @@ def create_user_admin(user: schema.UserCreate, user_id: int, token: str = Depend
 def update_user_admin(user_edit: int, user_id: str, user: schema.UserCreate, token: str = Depends(oauth2_scheme)):
     user_admin = db.session.query(models.User).filter(models.User.id==user_id).first()
     user_edit1 = db.session.query(models.User).filter(models.User.id==user_edit).first()
+    if user_admin == None:
+        return {"message": 'not user'}
     if user_admin.admin:
         user_edit1.email= user.email
         user_edit1.username = user.userName
@@ -330,6 +336,8 @@ def update_user_admin(user_edit: int, user_id: str, user: schema.UserCreate, tok
 @app.delete('/admin/delete-user/{user_id}/{user_delete}')
 def delete_user_admin(user_id: int, user_delete: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
         user_instance = db.session.query(models.User).filter(models.User.id==user_delete).first()
         db.session.delete(user_instance)
@@ -340,6 +348,8 @@ def delete_user_admin(user_id: int, user_delete: int, token: str = Depends(oauth
 @app.get('/admin/all-groups/{user_id}')
 def get_all_groups_admin(user_id: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
         groups = db.session.query(models.Group).all()
         return {"message": 'ok', "Groups": groups}
@@ -348,6 +358,12 @@ def get_all_groups_admin(user_id: int, token: str = Depends(oauth2_scheme)):
 @app.delete('/admin/delete-group/{user_id}/{group_id}')
 def delete_group_admin(user_id: int, group_id: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    messages = db.session.query(models.GroupMessage).filter(models.GroupMessage.groupId==group_id).all()
+    if user == None:
+        return {"message": 'not user'}
+    for message in messages:
+        db.session.delete(message)
+        db.session.commit()
     if user.admin:
         group_instance = db.session.query(models.Group).filter(models.Group.id==group_id).first()
         db.session.delete(group_instance)
@@ -358,6 +374,8 @@ def delete_group_admin(user_id: int, group_id: int, token: str = Depends(oauth2_
 @app.put('/admin/private-group/{user_id}/{group_id}')
 def make_group_private_admin(user_id: int, group_id: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
         group_instance = db.session.query(models.Group).filter(models.Group.id==group_id).first()
         group_instance.private = True
@@ -369,6 +387,8 @@ def make_group_private_admin(user_id: int, group_id: int, token: str = Depends(o
 @app.put('/admin/public-group/{user_id}/{group_id}')
 def make_group_public_admin(user_id: int, group_id: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
         group_instance = db.session.query(models.Group).filter(models.Group.id==group_id).first()
         group_instance.private = False
@@ -380,6 +400,8 @@ def make_group_public_admin(user_id: int, group_id: int, token: str = Depends(oa
 @app.get('/admin/groupMessages/{user_id}/{group_id}')
 def get_group_messages_admin(user_id: int, group_id: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
         messages = db.session.query(models.Message).filter(models.Group.id==group_id).all()
         for m in messages:
@@ -390,19 +412,25 @@ def get_group_messages_admin(user_id: int, group_id: int, token: str = Depends(o
 @app.delete('/admin/groupMessages/delete/{user_id}/{message_id}')
 def delete_group_messages_admin(user_id: int, message_id: int, token: str = Depends(oauth2_scheme)):
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
-        message_instance = db.session.query(models.Message).filter(models.Message.id==message_id).all()
+        message_instance = db.session.query(models.GroupMessage).filter(models.GroupMessage.id==message_id).first()
         db.session.delete(message_instance)
         db.session.commit()
         return {"message": 'ok'}
     return {"message": 'not admin'}
 
 @app.put('/admin/groupMessages/edit/{user_id}/{message_id}')
-def edit_group_messages_admin(user_id: int, message_id: int, message: str, token: str = Depends(oauth2_scheme)):
+def edit_group_messages_admin(user_id: int, message_id: int, message: schema.GroupMessageCreate, token: str = Depends(oauth2_scheme)):
+    print("WOW")
     user = db.session.query(models.User).filter(models.User.id==user_id).first()
+    print("····")
+    if user == None:
+        return {"message": 'not user'}
     if user.admin:
-        message_instance = db.session.query(models.Message).filter(models.Message.id==message_id).first()
-        message_instance.body = message
+        message_instance = db.session.query(models.GroupMessage).filter(models.GroupMessage.id==message_id).first()
+        message_instance.body = message.body
         db.session.commit()
         db.session.refresh(message_instance)
         return {"message": 'ok'}

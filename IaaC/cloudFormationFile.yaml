@@ -1,0 +1,38 @@
+---
+Resources:
+    MyInstanceBackend:
+        Type: AWS::EC2::Instance
+        Properties:
+            AvailabilityZone: us-east-1a
+            ImageId: ami-a4c7edb2
+            InstanceType: t2.micro
+
+    #An elastic IP for our backend instance
+    MyEIPBackend:
+        Type: AWS::EC2::EIP
+        Properties:
+            InstanceId: !Ref MyInstanceBackend
+   
+    MyInstanceFrontend:
+        Type: AWS::EC2::Instance
+        Properties:
+            AvailabilityZone: us-east-1a
+            ImageId: ami-a4c7edb2
+            InstanceType: t2.micro
+    
+    #An elastic IP for our frontend instance
+    MyEIPFrontend:
+        Type: AWS::EC2::EIP
+        Properties:
+            InstanceId: !Ref MyInstanceFrontend
+
+#In AWS console you will see in the outputs the values of our Elastic IPS            
+Outputs:
+    BackendElasticIP:
+        Description: Backend Elastic IP Value
+        Value: !Ref MyEIPBackend
+
+    FrontendElasticIP:
+        Description: Frontend Elastic IP Value
+        Value: !Ref MyEIPFrontend
+    

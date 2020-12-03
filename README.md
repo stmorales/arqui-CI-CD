@@ -16,81 +16,60 @@ Esta entrega consiste en dos partes, la parte mínima (que todos deben lograr) q
 
 ### Sección mínima (50%) (30p)
 
-#### **Backend**
-* **RF1: (3p)** Se debe poder enviar mensajes y se debe registrar su timestamp. Estos mensajes deben aparecer en otro usuario, ya sea en tiempo real o refrescando la página. :heavy_check_mark:
-* **RF2: (5p)** Se deben exponer endpoints HTTP que realicen el procesamiento y cómputo del chat para permitir desacoplar la aplicación. :heavy_check_mark:
+#### **Autentificación**
+* **RF1:** Añadir un servicio completamente independiente para manejar la sesión de los usuarios. La sesión debe contener información para permitir a laaplicación acceder a la información que le corresponda. Se recomienda el uso de JWT o SAML. :heavy_check_mark:
+* **RF2:** La implementación debe considerar algún protocolo como OAuth, de manera que se externalice la identificación y nivel de acceso de los usuarios.Con esta implementación debe permitir que se pueda desarrollar una nueva aplicación que consuma sus servicios, así como también manejar el acceso desus usuarios.
 
-* **RF3: (7p)** Establecer un AutoScalingGroup con una AMI de su instancia EC2 para lograr autoescalado direccionado desde un ELB (_Elastic Load Balancer_).
-    * **(4p)** Debe estar implementado el Load Balancer :heavy_check_mark:
-    * **(3p)** Se debe añadir al header del request información sobre cuál instancia fue utilizada para manejar el request. Se debe señalar en el Readme cuál fue el header agregado.
-* **RF4: (2p)** El servidor debe tener un nombre de dominio de primer nivel (tech, me, tk, ml, ga, com, cl, etc). :heavy_check_mark:
+* **RF3:** El mismo sistema debe considerar el acceso de administrador. Es decir, si el usuario tiene acceso a la aplicación de mensajería también deberíausar la misma cuenta para administrador. (Single Sign On, a.k.a SSO). :heavy_check_mark:
+* **RF4:** Implementar 2FA en su solución. Esto debe ser implementado mediante un correo o SMS
 
-* **RF4: (3p)** El dominio debe estar asegurado por SSL con Let's Encrypt. No se pide *auto renew*. Tambien pueden usar el servicio de certificados de AWS para el ELB :heavy_check_mark:
-    * **(2p)** Debe tener SSL. :heavy_check_mark:
-    * **(1p)** Debe redirigir HTTP a HTTPS. :heavy_check_mark:
+#### **CI/CD**
+* **RF1:**  Debe documentarse un flujo de integración en el repositorio de código. Debe incluirse semantic versioning en todos sus commits (Visto en clases). :heavy_check_mark: (Los commits no se hicieron porque este item fue el último que hicimos, pero la documentación de la integración se encuentra en el Integration.md)
+* **RF2:** Cada vez que haya se haga un merge a master se debe automatizar el despliegue en un ambiente (ya sea staging o producción) utilizando algunaherramienta como Travis/CodeBuild/Jenkins u otro. (Generar y almacenar las imágenes si correspnde) :heavy_check_mark:
+* **RF3:** Se deben incorporar tests de funcionalidad (unitarios y de integración) antes de hacer el paso real. Se piden algunos tests para mostrar sufuncionamiento (Al menos tres tests unitarios simbólicos pero que den resultados). Se encuentran en `test_main.py` :heavy_check_mark:
+* **RF4:** El sistema de despliegue continuo debe hacerse cargo de manejar las variables de entorno de manera segura. :heavy_check_mark:
 
-#### **Frontend**
-* **RF5: (3p)** Utilizar un CDN para exponer los *assets* de su frontend. (ej. archivos estáticos, el mismo *frontend*, etc.). Para esto recomendamos fuertemente usar cloudfront en combinacion con S3. :heavy_check_mark:
-* **RF6: (7p)** Realizar una aplicación para el *frontend* que permita ejecutar llamados a los endpoints HTTP del *backend*. :heavy_check_mark:
-    * **(3p)** Debe hacer llamados al servidor correctamente. :heavy_check_mark:
-    * Elegir **$1$** de los siguientes. No debe ser una aplicación compleja en diseño. No pueden usar una aplicacion que haga rendering via template de los sitios web. Debe ser una app que funcione via endpoints REST
-        * **(4p)** Hacer una aplicación móvil (ej. Flutter, ReactNative)
-        * **(4p)** Hacer una aplicación web (ej. ReactJS, Vue, Svelte) :heavy_check_mark:
-
+#### **Documentación**
+* **RF1:**  Debe documentar con diagramas de componentes el sistema a fines de esta entrega :heavy_check_mark:
+* **RF2:** Debe documentar con diagramas de flujo los procesos de log in/sign up, envío de mensajes (considerando todos los procesos que ocurran a partirde ahí). :heavy_check_mark:
+* **RF3:** Debe documentar con diagramas el proceso de despliegue. :heavy_check_mark:
+* **RF4:** Debe documentar todas las posibles llamadas a sus APIs con algún estandar (Postman, Swagger u otra) :heavy_check_mark: (Esta documentación se encuentra en el siguiente link: https://backend-grupo14-arqui.tk/docs/)
 ---
 
 ## Sección variable
 
 Deben completar al menos 2 de los 3 requisitos
 
-### Caché (25%) (15p)
-Para esta sección variable la idea es implementar una capa de Caché para almacenar información y reducir la carga en el sistema. Para almacenar información para la aplicación recomendamos el uso de **Redis**, así como recomendamos Memcached para fragmentos de HTML o respuestas de cara al cliente. 
+### CRUD Admin (25%) (15p)
 
-* **RF1: (4p)** Levantar la infraestructura necesaria de caché. Se puede montar en otra máquina o usando el servicios administrado por AWS. Se debe indicar como funciona en local y en producción.  :heavy_check_mark:
-* **RF2: (6p)** Utilizar la herramienta seleccionada de caché para almacenar las información para al menos 2 casos de uso. Por ejemplo las salas y sus últimos mensajes o credenciales de acceso (login). 
-    * **Restricción** Por cada caso de uso debe utilizar alguna configuración distinta (reglas de entrada FIFO/LIFO, estructura de datos o bien el uso de reglas de expiración)
-* **RF3: (5p)** Documentar y explicar la selección de la tecnología y su implementación en el sistema. Responder a preguntas como: "¿por qué se usó el FIFO/LRU o almacenar un hash/list/array?" para cada caso de uso implementado. 
-
-
-### Trabajo delegado (25%) (15p)
-Para esta sección de delegación de trabajo recomendamos el uso de "Functions as a Service" como el servicio administrado de AWS, _Lambda Functions_, o bien el uso de más herramientas como AWS SQS y AWS SNS. 
-
-Se pide implementar al menos **3 casos de uso con distinto tipo de integración**.
+* **RF1:** Se implementa un menu para acceder a la información de los usuarios. Se puede revisar y modificar la información de éstos y bloquear el acceso
+("borrar"). De ser necesario, debe interactuar con el sistema de auth implementado en la sección de Autenticación. :heavy_check_mark:
+* **RF2:** Se implementa el menú para manejar grupos. Se pueden cerrar grupos, dejar públicos o privados. :heavy_check_mark:
+* **RF3:** Se implementa el CRUD mensajes. Como admin puede enviar mensajes en grupos, ver y modificar los mensajes e incluye la censura de ellos. Al
+modificar o censurar los mensajes no se puede perder el mensaje original. :heavy_check_mark:
 
 
-1.- Mediante una llamada web (AWS API Gateway)
-2.- Mediante código incluyendo la librería (sdk)
-3.- Como evento a partir de una regla del AutoScalingGroup
-4.- Mediante Eventbridge para eventos externos (NewRelic, Auth0 u otro)
-5.- Cuando se esté haciendo un despliegue mediante CodeCommit 
-6.- Cuando se cree/modifique un documento a S3
+### Encriptación (25%) (15p)
 
-Alternativamente pueden integrar más servicios para realizar tareas más lentas de la siguiente forma: 
-1.- Al crear un mensaje se registra en una cola (SQS) que llama a una función en lambda (directamente o a través de SNS)
-2.- En Lambda se analiza ciertos criterios (si es positivo o negativo, si tiene "garabatos" o palabras prohibidas en el chat) y con este resultado se "taggea" el comentario. 
-Si se crean en "tópics" distintos se consideran como 2 casos de uso (por el uso de distintas herramientas). 
+* **RF1:** Salas de chat privadas. :heavy_check_mark:
+* **RF2:** Encriptación end-to-end en mensajes de un grupo. (incompleto)
+* **RF3:** Debe documentar los mecanismos utilizados para cada uno de los puntos anteriores y su método de implementación. :heavy_check_mark:
 
-Seguir el siguiente tutorial cuenta como 3 (https://read.acloud.guru/perform-sentiment-analysis-with-amazon-comprehend-triggered-by-aws-lambda-7363db23651f o https://medium.com/@manojf/sentiment-analysis-with-aws-comprehend-ai-ml-series-454c80a6114). No es necesaro que entiendan a cabalidad como funciona el código de estas funciones, pero sí que comprendan el flujo de la información y cómo es que se ejecuta.
-
-Se deben documentar las decisiones tomadas. 
-
-* **RF: (5p)** Por cada uno de los 3 tipos de integración.
-    * **(3p)** Por la implementación. :heavy_check_mark: : 1/3
-    * **(2p)** Por la documentación. :heavy_check_mark: 2/3
-
-### Mensajes en tiempo real (25%) (15p)
-El objetivo de esta sección es implementar la capacidad de enviar actualizaciones hacia otros servicios. Servicios recomendados a utilizar: SNS, Sockets (front), AWS Pinpoint entre otras. 
-
-* **RF1: (5p)** Cuando se escriben mensajes en un chat/sala que el usuario está viendo, se debe reflejar dicha acción sin que éste deba refrescar su aplicación. :heavy_check_mark:
-* **RF2: (5p)** Independientemente si el usuario está conectado o no, si es nombrado con @ o # se le debe enviar una notificación (al menos crear un servicio que diga que lo hace, servicio que imprime "se está enviando un correo") :heavy_check_mark:
-* **RF3: (5p)** Debe documentar los mecanismos utilizados para cada uno de los puntos anteriores indicando sus limitaciones/restricciones. :heavy_check_mark:
-
-
-#### Caso borde
-Si su grupo implementó varias funcionalidades como comandos en los chats, es posible utilizar dichas funciones en Lambdas y manejarlas en paralelo utilizando SQS y SNS en conjunto. Pueden aprovechar su desarrollo para implementar las secciones variables 2 y 3 en conjunto.
 
 
 ---
+
+### DOCUMENTACIÓN ENCRIPTACIÓN
+
+Para la encriptación se utilizó el sistema Vault, para esto, primero se levantó un Vault server en una instancia de EC2.
+En la branch vault-connection se encuentran los cambios en código realizados en el backend para conectarse con Vault, entre estos la función para encriptar y desencriptar en base64 como también el código para conectarse con la instancia de EC2 de Vault mediante el uso del token de cliente que tenemos. Nuestro backend está en FastApi por lo que se buscó la librería hvac de python para comunicarse como cliente con Vault.
+
+El Vault server en la instancia de EC2 se encuentra funcionando bien, y está configurado con el secret engine Transit para que funcione como EaaS (Encryption as a Service). El Vault está unsealed y se consiguió el token de cliente para que tanto el backend como el frontend pudieran hacer las llamadas a vault pidiéndole encriptar o desencriptar mensajes.
+
+Para conseguir la encriptación end-to-end lo que se prentendía hacer era que el frontend al recibir un mensaje en los chats de cualquier usuario, lo mandara en base64 Vault pidiéndole que lo encripte, luego Vault se lo devuelve encriptado al frontend y así recién es enviado al backend. Después, al llegar al backend este podría pedirle a Vault que se lo desencripte, Vault se lo manda en base64, el backend desencripta la base64 y obtiene el mensaje en texto plano para procesarlo si es necesario o sino simplemente cuando lo recibe encriptado lo guardaría en la base de datos sin desencriptar. De esta manera la comunicación end-to-end estaría encriptada, usando la seguridad que entrega la encriptación como servicio que ofrece Vault.
+
+No se alcanzó a completar por completo esta funcionalidad, pero la instancia está funcionando perfecto con Vault, el código de backend que se alcanzó a hacer está en la branch vault-connection y puede revisarse, para la parte de frontend no se alcanzó a escribir código, pero el objetivo era el antes descrito.
+Las salas de chat privadas se alcanzó a marcar la sala mediante un booleano si es privada o pública, para luego programar la funcionalidad de permitir o no el acceso basándose en esto.
 
 ### DOCUMENTACIÓN CHAT EN TIEMPO REAL
 
@@ -314,6 +293,4 @@ docker-compose up
 
 ### ACLARACIONES GENERALES:
 
-En un principio se usaba la carpeta "server" para hacer el chat en tiempo real, pero luego se decidió dejar todo en el backend, que corresponde a la carpeta Code.
-
-Es decir, server NO LA ESTAMOS USANDO!
+Este repositorio contiene el backend de la aplicación, en el otro repositorio de Frontend se encuentra el resto :)
